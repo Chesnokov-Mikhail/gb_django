@@ -8,10 +8,9 @@
   <h1>{{ content.title }}</h1>
   {% if content.result %}
     <ol>
-      {% for order,products in content.result.items %}
+      {% for delta,products in content.result.items %}
         <li>
-          Итоговая сумма заказа: {{ order.total_price }} руб.
-          Дата заказа: {{ order.order_date }}
+          за последние {{ delta.days }} дней:
           {% if products %}
           <p>Продукты:</p>
           <ol>
@@ -28,6 +27,6 @@
       {% endfor %}
     </ol>
   {% else %}
-    <p>У пользователя нет заказов</p>
+    <p>У пользователь не заказывал продукты</p>
   {% endif %}
 {% endblock %}

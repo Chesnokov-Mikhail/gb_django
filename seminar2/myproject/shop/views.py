@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import View
-from django.http import HttpResponse, JsonResponse
+from datetime import datetime, timedelta
 from .models import Client, Product, Order
 
 # Create your views here.
@@ -42,3 +42,23 @@ class GetAllOrderClient(View):
                                 }
                     }
         return render(request, 'shop/client_orders.html', context)
+
+class GetAllProductsByOrdersClient(View):
+    def get(self, request, client_id):
+        today = datetime.now()
+        delta_list = [timedelta(days=7), timedelta(days=30), timedelta(days=365)]
+        result = dict()
+        client = Client.objects.get(pk=client_id)
+        for delta in delta_list:
+            orders = Order.objects.filter(client=client, order_date__gte=(today - delta)).all()
+            result[delta] = set()
+            for order in orders:
+                products = order.products.all()
+                result[delta].update(products)
+        title_content = f'Список заказанных продуктов пользователем: {client.name}'
+        context = {'title': 'Интернет-магазин / пользователь',
+                    'content': {'title': title_content,
+                                'result': result,
+                                }
+                    }
+        return render(request, 'shop/client_products_orders.html', context)
