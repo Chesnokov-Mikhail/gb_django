@@ -15,7 +15,9 @@
           Электронная почта: {{ client.email }}
           Телефон: {{ client.telephone }}
           Адрес: {{ client.address }}
-          Дата регистрации: {{ client.registration_date }}
+          Дата регистрации: {{ client.registration_date }} <br>
+          <a href="{% url 'get_all_orders_by_client' client.id %}">Список заказов клиента</a> <br>
+          <a href="{% url 'get_all_products_orders_by_client' client.id %}">Список заказанных клиентом товаров</a>
         </li>
       {% endfor %}
     </ol>
