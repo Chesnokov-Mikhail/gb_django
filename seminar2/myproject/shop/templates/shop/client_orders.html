@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+  <h1>{{ content.title }}</h1>
+  {% if content.result %}
+    <ol>
+      {% for order in content.result %}
+        <li>
+          Цена заказа: {{ order.total_price }} руб.
+          Дата заказа: {{ order.order_date }}
+          {% if order.products %}
+          <ul>
+            {% for product in order.products %}
+            <li>
+                  {{ product.name }}
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p>Ожидается поступление продуктов</p>
+  {% endif %}
+{% endblock %}

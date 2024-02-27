@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+  <h1>{{ content.title }}</h1>
+  {% if content.result %}
+    <ul>
+        <li>
+          Название: <br>
+          {{ content.result.name }}
+        </li>
+        <li>
+          Описание: <br>
+          {{ content.result.description }}
+        </li>
+        <li>
+          Цена: <br>
+          {{ content.result.price }} руб.
+        </li>
+        <li>
+          Количество: <br>
+          {{ content.result.quantity }} шт.
+        </li>
+    </ul>
+  {% else %}
+    <p>Описание продукта временно отсутствует</p>
+  {% endif %}
+{% endblock %}
