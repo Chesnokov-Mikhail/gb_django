@@ -13,7 +13,7 @@
           Итоговая сумма заказа: {{ order.total_price }} руб.
           Дата заказа: {{ order.order_date }}
           {% if products %}
-          <p>Продукты:</p>
+          <p>Товары:</p>
           <ol>
             {% for product in products %}
             <li>
@@ -28,6 +28,6 @@
       {% endfor %}
     </ol>
   {% else %}
-    <p>У пользователя нет заказов</p>
+    <p>У клиента нет заказов</p>
   {% endif %}
 {% endblock %}

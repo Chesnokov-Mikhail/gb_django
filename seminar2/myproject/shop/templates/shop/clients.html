@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+  <h1>{{ content.title }}</h1>
+  {% if content.result %}
+    <ol>
+      {% for client in content.result %}
+        <li>
+          id: {{ client.id }}
+          Имя: {{ client.name }}
+          Электронная почта: {{ client.email }}
+          Телефон: {{ client.telephone }}
+          Адрес: {{ client.address }}
+          Дата регистрации: {{ client.registration_date }}
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p>Клиентов нет</p>
+  {% endif %}
+{% endblock %}

@@ -12,7 +12,7 @@
         <li>
           за последние {{ delta.days }} дней:
           {% if products %}
-          <p>Продукты:</p>
+          <p>Товары:</p>
           <ol>
             {% for product in products %}
             <li>
@@ -27,6 +27,6 @@
       {% endfor %}
     </ol>
   {% else %}
-    <p>У пользователь не заказывал продукты</p>
+    <p>Клиент не заказывал товары</p>
   {% endif %}
 {% endblock %}

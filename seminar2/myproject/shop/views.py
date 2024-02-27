@@ -19,13 +19,24 @@ class GetIndex(View):
 class GetProduct(View):
     def get(self, request, product_id):
         product = Product.objects.get(pk=product_id)
-        title_content = f'Описание продукта: {product.name}'
-        context = {'title': 'Интернет-магазин / продукт',
+        title_content = f'Описание товара: {product.name}'
+        context = {'title': 'Интернет-магазин / товар',
                     'content': {'title': title_content,
                                 'result': product,
                                 }
                     }
         return render(request, 'shop/product.html', context)
+
+class GetClients(View):
+    def get(self, request):
+        clients = Client.objects.all()
+        title_content = f'Список клиентов:'
+        context = {'title': 'Интернет-магазин / товар',
+                    'content': {'title': title_content,
+                                'result': clients,
+                                }
+                    }
+        return render(request, 'shop/clients.html', context)
 
 class GetAllOrderClient(View):
     def get(self, request, client_id):
@@ -35,8 +46,8 @@ class GetAllOrderClient(View):
         for order in orders:
             products = order.products.all()
             result[order] = products
-        title_content = f'Список заказов пользователя: {client.name}'
-        context = {'title': 'Интернет-магазин / пользователь',
+        title_content = f'Список заказов клиента: {client.name}'
+        context = {'title': 'Интернет-магазин / клиент',
                     'content': {'title': title_content,
                                 'result': result,
                                 }
@@ -49,14 +60,28 @@ class GetAllProductsByOrdersClient(View):
         delta_list = [timedelta(days=7), timedelta(days=30), timedelta(days=365)]
         result = dict()
         client = Client.objects.get(pk=client_id)
+        # Вариант вывода не отсортированных товаров (Товары не повторяются) по дате заказа, которые данные товары содержали
+        # for delta in delta_list:
+        #     orders = Order.objects.filter(client=client, order_date__gte=(today - delta)).all()
+        #     result[delta] = set()
+        #     for order in orders:
+        #         products = order.products.all()
+        #         result[delta].update(products)
+
+        # Вариант вывода отсортированных товаров (Товары не повторяются) по дате заказа, которые данные товары содержали
         for delta in delta_list:
-            orders = Order.objects.filter(client=client, order_date__gte=(today - delta)).all()
-            result[delta] = set()
+            orders = Order.objects.filter(client=client, order_date__gte=(today - delta)).order_by('-order_date').all()
+            result[delta] = []
+            product_set = set()
             for order in orders:
                 products = order.products.all()
-                result[delta].update(products)
-        title_content = f'Список заказанных продуктов пользователем: {client.name}'
-        context = {'title': 'Интернет-магазин / пользователь',
+                for prod in products:
+                    if prod not in product_set:
+                        result[delta].append(prod)
+                product_set.update(products)
+
+        title_content = f'Список заказанных товаров клиента: {client.name}'
+        context = {'title': 'Интернет-магазин / клиент',
                     'content': {'title': title_content,
                                 'result': result,
                                 }
