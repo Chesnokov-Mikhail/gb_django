@@ -33,11 +33,12 @@ class GetAllOrderClient(View):
         orders = Order.objects.filter(client=client).order_by('order_date').all()
         result = {}
         for order in orders:
-            products = Product.objects.filter(pk=order.products).all()
+            products = order.products.all()
+            result[order] = products
         title_content = f'Список заказов пользователя: {client.name}'
         context = {'title': 'Интернет-магазин / пользователь',
                     'content': {'title': title_content,
-                                'result': orders,
+                                'result': result,
                                 }
                     }
         return render(request, 'shop/client_orders.html', context)
