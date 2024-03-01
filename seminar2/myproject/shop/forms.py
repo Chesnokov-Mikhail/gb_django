@@ -3,7 +3,7 @@ import datetime
 from .models import Product
 
 class AddImageProduct(forms.Form):
-    product = forms.ModelChoiceField(queryset=Product.objects.all(), widget=forms.Select(), label='Выберите товар')
+    product = forms.ModelChoiceField(queryset=Product.objects.all(), widget=forms.Select(), label='Выберите товар', to_field_name="id")
     image = forms.ImageField(label='Загрузите изображение товара')
 
 class AddProduct(forms.Form):

@@ -28,12 +28,12 @@ class PostProduct(View):
                    'form': form,
                    }
         if form.is_valid():
-            product = Product(name = form.cleaned_data['name'],
-                                description = form.cleaned_data['description'],
-                                price = form.cleaned_data['price'],
-                                quantity = form.cleaned_data['quantity'],
-                                add_date = form.cleaned_data['add_date'],
-                                image = form.cleaned_data['image'])
+            product = Product(name=form.cleaned_data['name'],
+                                description=form.cleaned_data['description'],
+                                price=form.cleaned_data['price'],
+                                quantity=form.cleaned_data['quantity'],
+                                add_date=form.cleaned_data['add_date'],
+                                image=form.cleaned_data['image'])
             product.save()
             message = 'Изображение товара сохранено'
         context['message'] = message
@@ -60,9 +60,10 @@ class PostImageProduct(View):
                    'form': form,
                    }
         if form.is_valid():
-            product = Product.objects.filter(form.cleaned_data['product'])
-            product(image = form.cleaned_data['image'])
-            product.save()
+            image = form.cleaned_data['image']
+            fs = FileSystemStorage()
+            fs_name = fs.save(image.name, image)
+            Product.objects.filter(pk=form.cleaned_data['product'].pk).update(image=fs_name)
             message = 'Изображение товара сохранено'
         context['message'] = message
         return render(request, 'shop/add_image_product.html', context)

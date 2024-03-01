@@ -21,6 +21,9 @@ class Product(models.Model):
     add_date = models.DateField(default=None)
     image = models.ImageField(null=True)
 
+    # def __repr__(self):
+    #     return f'Product({self.name=},{self.description=},' \
+    #              f'{self.price=},{self.quantity=},{self.add_date=})'
     def __str__(self):
         return f'Productname: {self.name}'
         # return f'Productname: {self.name}, description: {self.description},' \
