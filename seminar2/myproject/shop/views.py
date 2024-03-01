@@ -1,9 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.files.storage import FileSystemStorage
 from django.views import View
 from datetime import datetime, timedelta
 from .models import Client, Product, Order
-from .forms import AddProduct, AddImageProduct
+from .forms import AddProduct, AddImageProduct,EditProduct, SelectProduct
 
 # Create your views here.
 
@@ -67,6 +67,87 @@ class PostImageProduct(View):
             message = 'Изображение товара сохранено'
         context['message'] = message
         return render(request, 'shop/add_image_product.html', context)
+
+class SelectEditProduct(View):
+    def get(self,request):
+        form = SelectProduct()
+        title_content = 'Выбрать товар для редактирования'
+        context = {'title': 'Интернет-магазин',
+                       'content': {'title': title_content,
+                                   },
+                       'form_select': form,
+                       }
+        return render(request, 'shop/edit_product.html', context)
+
+    def post(self,request):
+        name = request.POST.get('name')
+        if name == 'select':
+            form = SelectProduct(request.POST, request.FILE)
+            if form.is_valid():
+                return redirect(PostEditProduct, form.cleaned_data['product'].pk)
+
+class PostEditProduct(View):
+    def get(self,request, product_id):
+        if product_id:
+            product_select = Product.objects.filter(pk=product_id).first()
+            if product_select:
+                form_edit = EditProduct()
+                form = SelectProduct()
+                form.product = product_select
+                form_edit.product_id = product_select
+                form_edit.name = product_select.name
+                form_edit.description = product_select.description
+                form_edit.price = product_select.price
+                form_edit.quantity = product_select.quantity
+                form_edit.add_date = product_select.add_date
+                form_edit.image = product_select.image
+                title_content = 'Редактировать выбранный товар'
+                context = {'title': 'Интернет-магазин',
+                           'content': {'title': title_content,
+                                       },
+                           'form_select': form,
+                           'form_edit': form_edit,
+                           }
+        else:
+            form = SelectProduct()
+            title_content = 'Выбрать товар для редактирования'
+            context = {'title': 'Интернет-магазин',
+                       'content': {'title': title_content,
+                                   },
+                       'form_select': form,
+                       }
+        return render(request, 'shop/edit_product.html', context)
+
+    def post(self,request):
+        name = request.POST.get('name')
+        if name == 'select':
+            form = SelectProduct(request.POST, request.FILE)
+            if form.is_valid():
+                return redirect('post_edit_product', form.cleaned_data['product'].pk)
+        elif name == 'edit':
+            form_edit = EditProduct(request.POST, request.FILES)
+            message = 'Товар не изменен'
+            if form_edit.is_valid():
+                image = form_edit.cleaned_data['image']
+                fs = FileSystemStorage()
+                fs_name = fs.save(image.name, image)
+                data = form_edit.cleaned_data
+                Product.objects.filter(pk=data['product_id'].pk).update( name=data['name'],
+                                                                description=data['description'],
+                                                                price=data['price'],
+                                                                quantity=data['quantity'],
+                                                                add_date=data['add_date'],
+                                                                image=fs_name,)
+                message = 'Товар изменен'
+            title_content = 'Редактирование товара'
+            context = {'title': 'Интернет-магазин',
+                       'content': {'title': title_content,
+                                   },
+                       'form_edit': form_edit,
+                       }
+            context['message'] = message
+            return render(request, 'shop/edit_product.html', context)
+
 
 class GetIndex(View):
     def get(self, request):
