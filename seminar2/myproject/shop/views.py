@@ -1,10 +1,36 @@
 from django.shortcuts import render
+from django.core.files.storage import FileSystemStorage
 from django.views import View
 from datetime import datetime, timedelta
 from .models import Client, Product, Order
+from .forms import AddProduct, AddImageProduct
 
 # Create your views here.
 
+class PostImageProduct(View):
+    def get(self,request):
+        form = AddImageProduct()
+        title_content = 'Добавление изображение товара'
+        context = {'title': 'Интернет-магазин',
+                   'content': {'title': title_content,
+                               },
+                   'form': form,
+                   }
+        return render(request, 'shop/add_image_product.html', context)
+
+    def post(self,request):
+        form = AddImageProduct(request.POST, request.FILES)
+        if form.is_valid():
+            image = form.cleaned_data['image']
+            fs = FileSystemStorage()
+            fs.save(image.name, image)
+        title_content = 'Добавление изображение товара'
+        context = {'title': 'Интернет-магазин',
+                   'content': {'title': title_content,
+                               },
+                   'form': form,
+                   }
+        return render(request, 'shop/add_image_product.html', context)
 class GetIndex(View):
     def get(self, request):
         products = Product.objects.all()
