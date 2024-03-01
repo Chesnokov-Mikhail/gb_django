@@ -120,7 +120,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    Path(BASE_DIR).joinpath('static'),
 ]
 
 # Default primary key field type

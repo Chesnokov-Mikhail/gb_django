@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+  <h1>{{ content.title }}</h1>
+  {% if content.result %}
+    <ol>
+      {% for product in content.result %}
+        <li>
+          Название: <a href="{% url 'get_product_id' product.id %}">{{ product.name }}</a>
+          Цена: {{ product.price }} руб.
+          Количество: {{ product.quantity }} шт.
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p>Ожидается поступление товаров</p>
+  {% endif %}
+{% endblock %}

@@ -22,7 +22,7 @@ class Product(models.Model):
 
     def __str__(self):
         return f'Productname: {self.name}, description: {self.description},' \
-               f'price: {self.price}, quantity: {self.quantity}, add_date: {self.add_date}'
+                f'price: {self.price}, quantity: {self.quantity}, add_date: {self.add_date}'
 
 class Order(models.Model):
     client = models.ForeignKey(to=Client, on_delete=models.CASCADE)
