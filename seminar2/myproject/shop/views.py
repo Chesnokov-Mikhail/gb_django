@@ -7,6 +7,38 @@ from .forms import AddProduct, AddImageProduct
 
 # Create your views here.
 
+class PostProduct(View):
+    def get(self,request):
+        form = AddProduct()
+        title_content = 'Добавление товара'
+        context = {'title': 'Интернет-магазин',
+                   'content': {'title': title_content,
+                               },
+                   'form': form,
+                   }
+        return render(request, 'shop/add_product.html', context)
+
+    def post(self,request):
+        form = AddProduct(request.POST, request.FILES)
+        title_content = 'Добавление товара'
+        message = 'Товар не сохранен'
+        context = {'title': 'Интернет-магазин',
+                   'content': {'title': title_content,
+                               },
+                   'form': form,
+                   }
+        if form.is_valid():
+            product = Product(name = form.cleaned_data['name'],
+                                description = form.cleaned_data['description'],
+                                price = form.cleaned_data['price'],
+                                quantity = form.cleaned_data['quantity'],
+                                add_date = form.cleaned_data['add_date'],
+                                image = form.cleaned_data['image'])
+            product.save()
+            message = 'Изображение товара сохранено'
+        context['message'] = message
+        return render(request, 'shop/add_image_product.html', context)
+
 class PostImageProduct(View):
     def get(self,request):
         form = AddImageProduct()
@@ -20,20 +52,19 @@ class PostImageProduct(View):
 
     def post(self,request):
         form = AddImageProduct(request.POST, request.FILES)
-        message = 'Изображение товара не сохранено'
-        if form.is_valid():
-            image = form.cleaned_data['image']
-            fs = FileSystemStorage()
-            fs.save(image.name, image)
-            product = Product(image=image)
-            product.save()
-            message = 'Изображение товара сохранено'
         title_content = 'Добавление изображение товара'
+        message = 'Изображение товара не сохранено'
         context = {'title': 'Интернет-магазин',
                    'content': {'title': title_content,
                                },
                    'form': form,
                    }
+        if form.is_valid():
+            product = Product.objects.filter(form.cleaned_data['product'])
+            product(image = form.cleaned_data['image'])
+            product.save()
+            message = 'Изображение товара сохранено'
+        context['message'] = message
         return render(request, 'shop/add_image_product.html', context)
 
 class GetIndex(View):

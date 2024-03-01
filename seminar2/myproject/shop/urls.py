@@ -8,4 +8,5 @@ urlpatterns = [
     path('client/<int:client_id>/', views.GetAllOrderClient.as_view(), name='get_all_orders_by_client'),
     path('products/<int:client_id>/', views.GetAllProductsByOrdersClient.as_view(), name='get_all_products_orders_by_client'),
     path('image_product/', views.PostImageProduct.as_view(), name='post_image_product'),
+    path('add_product/', views.PostProduct.as_view(), name='post_product'),
 ]
