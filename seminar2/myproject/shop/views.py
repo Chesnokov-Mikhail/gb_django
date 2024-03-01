@@ -20,10 +20,14 @@ class PostImageProduct(View):
 
     def post(self,request):
         form = AddImageProduct(request.POST, request.FILES)
+        message = 'Изображение товара не сохранено'
         if form.is_valid():
             image = form.cleaned_data['image']
             fs = FileSystemStorage()
             fs.save(image.name, image)
+            product = Product(image=image)
+            product.save()
+            message = 'Изображение товара сохранено'
         title_content = 'Добавление изображение товара'
         context = {'title': 'Интернет-магазин',
                    'content': {'title': title_content,
@@ -31,6 +35,7 @@ class PostImageProduct(View):
                    'form': form,
                    }
         return render(request, 'shop/add_image_product.html', context)
+
 class GetIndex(View):
     def get(self, request):
         products = Product.objects.all()

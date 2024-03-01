@@ -15,14 +15,16 @@ class Client(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(default=None)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField(default=0)
-    add_date = models.DateField()
+    add_date = models.DateField(default=None)
+    image = models.ImageField(null=True)
 
     def __str__(self):
-        return f'Productname: {self.name}, description: {self.description},' \
-                f'price: {self.price}, quantity: {self.quantity}, add_date: {self.add_date}'
+        return f'Productname: {self.name}'
+        # return f'Productname: {self.name}, description: {self.description},' \
+        #         f'price: {self.price}, quantity: {self.quantity}, add_date: {self.add_date}'
 
 class Order(models.Model):
     client = models.ForeignKey(to=Client, on_delete=models.CASCADE)
