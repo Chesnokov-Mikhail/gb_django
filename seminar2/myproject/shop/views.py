@@ -115,16 +115,24 @@ class PostEditProduct(View):
         message = 'Товар не изменен'
         print(form_edit.is_valid())
         if form_edit.is_valid():
-            image = form_edit.cleaned_data['image']
-            fs = FileSystemStorage()
-            fs_name = fs.save(image.name, image)
             data = form_edit.cleaned_data
-            Product.objects.filter(pk=product_id).update(name=data['name'],
+            image = data['image']
+            if image:
+                fs = FileSystemStorage()
+                fs_name = fs.save(image.name, image)
+                Product.objects.filter(pk=product_id).update(name=data['name'],
                                                                     description=data['description'],
                                                                     price=data['price'],
                                                                     quantity=data['quantity'],
                                                                     add_date=data['add_date'],
                                                                     image=fs_name, )
+            else:
+                Product.objects.filter(pk=product_id).update(name=data['name'],
+                                                             description=data['description'],
+                                                             price=data['price'],
+                                                             quantity=data['quantity'],
+                                                             add_date=data['add_date'],
+                                                             )
             message = 'Товар изменен'
         title_content = 'Редактирование товара'
         context = {'title': 'Интернет-магазин',
