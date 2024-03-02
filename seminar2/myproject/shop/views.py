@@ -84,23 +84,23 @@ class SelectEditProduct(View):
         if name == 'select':
             form = SelectProduct(request.POST, request.FILE)
             if form.is_valid():
-                return redirect(PostEditProduct, form.cleaned_data['product'].pk)
+                return redirect(PostEditProduct.as_view(), form.cleaned_data['product'].pk)
 
 class PostEditProduct(View):
     def get(self,request, product_id):
         if product_id:
             product_select = Product.objects.filter(pk=product_id).first()
             if product_select:
-                form_edit = EditProduct()
-                form = SelectProduct()
-                form.product = product_select
-                form_edit.product_id = product_select
-                form_edit.name = product_select.name
-                form_edit.description = product_select.description
-                form_edit.price = product_select.price
-                form_edit.quantity = product_select.quantity
-                form_edit.add_date = product_select.add_date
-                form_edit.image = product_select.image
+                form_edit = EditProduct(initial={'product_id': product_select.pk,
+                                                'name':product_select.name,
+                                                'description':product_select.description,
+                                                'price':product_select.price,
+                                                'quantity':product_select.quantity,
+                                                'add_date':product_select.add_date,
+                                                'image':product_select.image,
+                                                 }
+                                        )
+                form = SelectProduct(initial={'product':product_select})
                 title_content = 'Редактировать выбранный товар'
                 context = {'title': 'Интернет-магазин',
                            'content': {'title': title_content,
@@ -118,7 +118,8 @@ class PostEditProduct(View):
                        }
         return render(request, 'shop/edit_product.html', context)
 
-    def post(self,request):
+    def post(self,request, product_id):
+        print(request.POST)
         name = request.POST.get('name')
         if name == 'select':
             form = SelectProduct(request.POST, request.FILE)
