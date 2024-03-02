@@ -1,6 +1,12 @@
 from django import forms
+from django.forms.widgets import ClearableFileInput
 import datetime
 from .models import Product
+
+class MyClearableFileInput(ClearableFileInput):
+    initial_text = ''
+    input_text = 'Изменить изображение'
+    clear_checkbox_label = 'Удалить изображение'
 
 class AddImageProduct(forms.Form):
     product = forms.ModelChoiceField(queryset=Product.objects.all(), widget=forms.Select(), label='Выберите товар', to_field_name="id")
@@ -22,7 +28,7 @@ class EditProduct(forms.Form):
     quantity = forms.IntegerField(initial=0, label='Количество товара')
     add_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput(attrs={'type': 'date'}),
                                label='Дата добавления товара')
-    image = forms.ImageField(label='Изображение товара')
+    image = forms.ImageField(label='Изображение товара', widget=MyClearableFileInput)
 
 class SelectProduct(forms.Form):
     product = forms.ModelChoiceField(queryset=Product.objects.all(), widget=forms.Select(), label='Выберите товар')

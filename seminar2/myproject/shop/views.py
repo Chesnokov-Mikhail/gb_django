@@ -98,12 +98,10 @@ class PostEditProduct(View):
                                                 'image':product_select.image,
                                                  }
                                         )
-                # form = SelectProduct(initial={'product':product_select})
                 title_content = 'Редактировать выбранный товар'
                 context = {'title': 'Интернет-магазин',
                            'content': {'title': title_content,
                                        },
-                           # 'form_select': form,
                            'form_edit': form_edit,
                            }
         else:
