@@ -15,7 +15,7 @@ class AddProduct(forms.Form):
     image = forms.ImageField(label='Изображение товара')
 
 class EditProduct(forms.Form):
-    product_id = forms.CharField(disabled=True, label='ID товара')
+    # product_id = forms.IntegerField(required=False, disabled=True, label='ID товара')
     name = forms.CharField(max_length=200, label='Наименование товара')
     description = forms.CharField(required=False, widget=forms.Textarea(), label='Описание товара')
     price = forms.DecimalField(max_digits=10, decimal_places=2, label='Цена товара')

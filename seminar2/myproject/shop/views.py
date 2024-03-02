@@ -80,11 +80,9 @@ class SelectEditProduct(View):
         return render(request, 'shop/edit_product.html', context)
 
     def post(self,request):
-        name = request.POST.get('name')
-        if name == 'select':
-            form = SelectProduct(request.POST, request.FILE)
-            if form.is_valid():
-                return redirect(PostEditProduct.as_view(), form.cleaned_data['product'].pk)
+        form = SelectProduct(request.POST)
+        if form.is_valid():
+            return redirect('post_edit_product', form.cleaned_data['product'].pk)
 
 class PostEditProduct(View):
     def get(self,request, product_id):
@@ -100,55 +98,42 @@ class PostEditProduct(View):
                                                 'image':product_select.image,
                                                  }
                                         )
-                form = SelectProduct(initial={'product':product_select})
+                # form = SelectProduct(initial={'product':product_select})
                 title_content = 'Редактировать выбранный товар'
                 context = {'title': 'Интернет-магазин',
                            'content': {'title': title_content,
                                        },
-                           'form_select': form,
+                           # 'form_select': form,
                            'form_edit': form_edit,
                            }
         else:
-            form = SelectProduct()
-            title_content = 'Выбрать товар для редактирования'
-            context = {'title': 'Интернет-магазин',
-                       'content': {'title': title_content,
-                                   },
-                       'form_select': form,
-                       }
+            return redirect('post_edit_product')
         return render(request, 'shop/edit_product.html', context)
 
     def post(self,request, product_id):
-        print(request.POST)
-        name = request.POST.get('name')
-        if name == 'select':
-            form = SelectProduct(request.POST, request.FILE)
-            if form.is_valid():
-                return redirect('post_edit_product', form.cleaned_data['product'].pk)
-        elif name == 'edit':
-            form_edit = EditProduct(request.POST, request.FILES)
-            message = 'Товар не изменен'
-            if form_edit.is_valid():
-                image = form_edit.cleaned_data['image']
-                fs = FileSystemStorage()
-                fs_name = fs.save(image.name, image)
-                data = form_edit.cleaned_data
-                Product.objects.filter(pk=data['product_id'].pk).update( name=data['name'],
-                                                                description=data['description'],
-                                                                price=data['price'],
-                                                                quantity=data['quantity'],
-                                                                add_date=data['add_date'],
-                                                                image=fs_name,)
-                message = 'Товар изменен'
-            title_content = 'Редактирование товара'
-            context = {'title': 'Интернет-магазин',
-                       'content': {'title': title_content,
-                                   },
-                       'form_edit': form_edit,
-                       }
-            context['message'] = message
-            return render(request, 'shop/edit_product.html', context)
-
+        form_edit = EditProduct(request.POST, request.FILES)
+        message = 'Товар не изменен'
+        print(form_edit.is_valid())
+        if form_edit.is_valid():
+            image = form_edit.cleaned_data['image']
+            fs = FileSystemStorage()
+            fs_name = fs.save(image.name, image)
+            data = form_edit.cleaned_data
+            Product.objects.filter(pk=product_id).update(name=data['name'],
+                                                                    description=data['description'],
+                                                                    price=data['price'],
+                                                                    quantity=data['quantity'],
+                                                                    add_date=data['add_date'],
+                                                                    image=fs_name, )
+            message = 'Товар изменен'
+        title_content = 'Редактирование товара'
+        context = {'title': 'Интернет-магазин',
+                   'content': {'title': title_content,
+                               },
+                   'form_edit': form_edit,
+                   }
+        context['message'] = message
+        return render(request, 'shop/edit_product.html', context)
 
 class GetIndex(View):
     def get(self, request):
