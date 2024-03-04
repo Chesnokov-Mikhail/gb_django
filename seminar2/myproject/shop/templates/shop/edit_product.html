@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+  <h1>{{ content.title }}</h1>
+  {% if form_select %}
+    <form name="select" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form_select.as_p }}
+      <button type="submit">Выбрать</button>
+    </form>
+  {% endif %}
+  {% if form_edit %}
+    <form name="edit" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form_edit.as_p }}
+      <button type="submit">Обновить</button>
+    </form>
+  {% endif %}
+  <br>
+  {% if message %}
+    <p>{{ message }}</p>
+  {% endif %}
+{% endblock %}
