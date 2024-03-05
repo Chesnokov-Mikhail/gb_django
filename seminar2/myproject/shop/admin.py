@@ -50,8 +50,15 @@ class ProductAdmin(admin.ModelAdmin):
     ]
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['client', 'total_price', 'order_date']
-    list_filter = ['client', 'total_price', 'order_date']
-    search_fields = ['client']
+    fields = ['client','products', 'total_price', 'order_date']
+    list_display = ['get_client', 'get_products', 'total_price', 'order_date']
+    list_filter = ['total_price', 'order_date']
+    search_fields = ['get_client']
     search_help_text = 'Поиск по полю Клиенту (client)'
     readonly_fields = ['order_date']
+
+    def get_products(self, obj):
+        return "\n".join([p.name for p in obj.products.all()])
+
+    def get_client(self, obj):
+        return "\n".join([obj.client.name])
